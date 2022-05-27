@@ -137,57 +137,103 @@ def moveServo(percent):
     pwmServo.ChangeDutyCycle(percent)
    
 
-for event in game_pad.read_loop():
-        key_event = categorize(event)
-        if event.type == ecodes.EV_KEY:
-            #print key_event
-            if key_event.keystate == KeyEvent.key_down:
-                scan_code = key_event.scancode
-                if scan_code == 304:  # A
-                    print("A")
-                elif scan_code == 308:  # Y
-                    print ("Y")
-                elif scan_code == 305:  # B
-                    print ("B")
-                elif scan_code == 307:  # X
-                    print ("X")
-                elif scan_code == 311:  # R1
-                    print ("R1")
-                elif scan_code == 310:  # L1
-                    print ("L1")
-                elif scan_code == 314:  # Back
-                    print ("Back")
-                elif scan_code == 315:  # Start
-                    print ("Start")
+def turnRight(joystickValue):
 
-        if event.type == ecodes.EV_ABS:
-            event_code = key_event.event.code
-            absevent = categorize(event)
-            
-            if event_code == 2:
-                print ("ABS_Z L2")
-            elif event_code == 5:
-                print ("ABS_RZ R2")
-            elif event_code == 0:
-                print ("ABS_X left/right")
-            elif event_code == 1:
-                if absevent.event.value > -129:
-                    print("back")
-                elif absevent.event.value < -129:
-                    print("forward")
-                else:
-                    print("stop")
-                print(absevent.event.value)
-            elif event_code == 3:
-                print ("ABS_RX left/right")
-            elif event_code == 4:
-                print ("ABS_RX up/down")
-            elif event_code == 16:
-                print ("ABS_HAT0X left/right")
-            elif event_code == 17:
-                print ("ABS_HAT0Y up/down")
+    print("right")
+
+    angle = map(joystickValue, 32767, 128, 12, 7)
+
+    pwmServo.ChangeDutyCycle(angle)
+
+    print(angle)
 
 
+
+
+def turnLeft(joystickValue):
+
+    print("left")
+
+    angle = map(joystickValue, -32768, 128, 7, 2)
+
+    pwmServo.ChangeDutyCycle(angle)
+
+    print(angle)
+
+
+
+
+def stopServo():
+
+    print("stop turn")
+
+    pwmServo.ChangeDutyCycle(7)
+
+    
+
+def map(joystickValue, oldMax, oldMin, newMax, newMin):
+
+    oldRange = (oldMax - oldMin)
+
+    newRange = (newMax - newMin)
+
+    newValue = (((joystickValue - oldMin) * newRange) / oldRange) + newMin
+
+    return newValue
+
+
+def joystickTest():
+
+    game_pad = InputDevice('/dev/input/event2')
+    for event in game_pad.read_loop():
+            key_event = categorize(event)
+            if event.type == ecodes.EV_KEY:
+                #print key_event
+                if key_event.keystate == KeyEvent.key_down:
+                    scan_code = key_event.scancode
+                    if scan_code == 304:  # A
+                        print("A")
+                    elif scan_code == 308:  # Y
+                        print ("Y")
+                    elif scan_code == 305:  # B
+                        print ("B")
+                    elif scan_code == 307:  # X
+                        print ("X")
+                    elif scan_code == 311:  # R1
+                        print ("R1")
+                    elif scan_code == 310:  # L1
+                        print ("L1")
+                    elif scan_code == 314:  # Back
+                        print ("Back")
+                    elif scan_code == 315:  # Start
+                        print ("Start")
+
+            if event.type == ecodes.EV_ABS:
+                event_code = key_event.event.code
+                absevent = categorize(event)
+                
+                if event_code == 2:
+                    print ("ABS_Z L2")
+                elif event_code == 5:
+                    print ("ABS_RZ R2")
+                elif event_code == 0:
+                    print ("ABS_X left/right")
+                elif event_code == 1:
+                    if absevent.event.value > -129:
+                        print("back")
+                    elif absevent.event.value < -129:
+                        print("forward")
+                    else:
+                        print("stop")
+                    print(absevent.event.value)
+                elif event_code == 3:
+                    print ("ABS_RX left/right")
+                elif event_code == 4:
+                    print ("ABS_RX up/down")
+                elif event_code == 16:
+                    print ("ABS_HAT0X left/right")
+                elif event_code == 17:
+                    print ("ABS_HAT0Y up/down")
 
 
 
@@ -205,19 +251,19 @@ def joystickDriving():
 
             if event_code == 4:
                 if absevent.event.value > -129:
-                    Drive.back(absevent.event.value)
+                    back(absevent.event.value)
                 elif absevent.event.value < -129:
-                    Drive.forward(absevent.event.value)
+                    forward(absevent.event.value)
                 else:
-                    Drive.stop()
+                    stop()
 
             if event_code == 0:
                 if absevent.event.value > 128:             
-                    Drive.turnRight(absevent.event.value)
+                    turnRight(absevent.event.value)
                 elif absevent.event.value < 128:
-                    Drive.turnLeft(absevent.event.value)
+                    turnLeft(absevent.event.value)
                 else:
-                    Drive.stopServo()
+                    stopServo()
 
 while(1):
 
