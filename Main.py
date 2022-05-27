@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO          
 import time
+import Encoder
 
 in1 = 24
 in2 = 23
@@ -7,6 +8,11 @@ in3 = 22
 in4 = 27
 enA = 12
 enB = 17
+
+leftMotorEncoderA = 13
+leftMotorEncoderB = 19
+rightMoterencoderA = 5
+rightMoterencoderA = 6
 
 servo = 26
 
@@ -42,7 +48,12 @@ print("The default speed & direction of motor is LOW & Forward.....")
 print("s-stop f-forward b-backward l-low m-medium h-high e-exit")
 print("\n")
 
-def forward():
+def changeSpeed(speed):
+
+    pwmEna.ChangeDutyCycle(speed)
+    pwmEnb.ChangeDutyCycle(speed)
+
+def forward(joystickValue):
    
     print("forward")
     GPIO.output(in1,GPIO.LOW)
@@ -50,7 +61,12 @@ def forward():
     GPIO.output(in3,GPIO.HIGH)
     GPIO.output(in4,GPIO.LOW)
     x='z'
-   
+    speed = map(joystickValue, -2768, -129, 100, 0)
+    
+    changeSpeed(speed)
+
+    print(speed)
+
 def back():
    
     print("backward")
@@ -58,6 +74,13 @@ def back():
     GPIO.output(in2,GPIO.LOW)
     GPIO.output(in3,GPIO.LOW)
     GPIO.output(in4,GPIO.HIGH)
+
+    speed = map(joystickValue, 32767, -129, 100, 0)
+
+    changeSpeed(speed)
+
+    print(speed)
+
     x='z'
    
 def right():
